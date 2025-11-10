@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeFinance - Smart Investing Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- SEO + Performance -->
+  <meta name="title" content="SafeFinance - Safe Mining Investment & Smart Online Income Platform">
+  <meta name="description" content="Explore safe mining investment platforms, legal finance options, and consistent online income opportunities. Trusted, secure, and profitable finance solutions.">
+  <meta name="keywords" content="safe mining, mining investment, finance platform, online income, legal mining, passive income, finance growth, investing online, SafeFinance">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#1dbf73">
+
+  <style>
+    * {margin:0; padding:0; box-sizing:border-box; font-family:"Poppins",sans-serif;}
+    body {background:#f4f9f4; color:#222; overflow-x:hidden;}
+
+    /* Navbar */
+    nav {
+      background:#1dbf73;
+      color:white;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:15px 8%;
+      position:sticky;
+      top:0;
+      z-index:1000;
+    }
+    nav .logo {font-weight:700; font-size:1.5em;}
+    nav ul {list-style:none; display:flex; gap:25px;}
+    nav ul li a {color:white; text-decoration:none; font-weight:500; transition:0.3s;}
+    nav ul li a:hover {text-decoration:underline;}
+
+    /* Hamburger */
+    .hamburger {display:none; flex-direction:column; cursor:pointer; gap:5px;}
+    .hamburger div {width:25px; height:3px; background:white; border-radius:3px;}
+
+    /* Sidebar */
+    .sidebar {
+      position:fixed; top:0; left:-250px; height:100%; width:250px;
+      background:#1dbf73; color:white; padding:60px 20px;
+      transition:all 0.4s ease; z-index:2000;
+    }
+    .sidebar.active {left:0;}
+    .sidebar a {display:block; color:white; text-decoration:none; padding:12px 0;
+      border-bottom:1px solid rgba(255,255,255,0.1); font-weight:500; transition:0.3s;}
+    .sidebar a:hover {padding-left:10px;}
+    .sidebar .close-btn {position:absolute; top:20px; right:20px; font-size:1.5em; cursor:pointer; color:white;}
+
+    /* Overlay */
+    .overlay {
+      position:fixed; top:0; left:0; width:100%; height:100%;
+      background:rgba(0,0,0,0.3); opacity:0; visibility:hidden;
+      transition:all 0.3s ease; z-index:1500;
+    }
+    .overlay.active {opacity:1; visibility:visible;}
+
+    /* Hero */
+    .hero {
+      text-align:center;
+      padding:80px 20px;
+      background:linear-gradient(135deg,#e8f9ee,#ffffff);
+    }
+    .hero h1 {
+      color:#1dbf73;
+      font-size:2.6em;
+      margin-bottom:10px;
+      letter-spacing:0.5px;
+    }
+    .hero h1 span {color:#148f55;}
+    .hero p {
+      font-size:1.1em;
+      color:#555;
+      max-width:700px;
+      margin:auto;
+      line-height:1.7em;
+    }
+
+    /* Card Section */
+    .card-container {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+      gap:30px;
+      padding:60px 8%;
+      justify-items:center;
+    }
+
+    .card {
+      background:white;
+      border-radius:15px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.1);
+      overflow:hidden;
+      transition:0.3s ease;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      text-align:center;
+      width:100%;
+      max-width:400px;
+    }
+
+    .card:hover {
+      transform:translateY(-5px);
+      box-shadow:0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .card img {
+      width:100%;
+      aspect-ratio:16 / 9;
+      object-fit:cover;
+      object-position:center;
+      display:block;
+      border-bottom:1px solid #eee;
+      background-color:#f4f4f4;
+      cursor:pointer;
+      transition:transform 0.3s ease;
+    }
+
+    .card img:hover {transform:scale(1.03);}
+
+    .card-content {
+      padding:20px;
+    }
+
+    .card-content h3 {
+      color:#1dbf73;
+      margin-bottom:10px;
+      font-size:1.2em;
+    }
+
+    .card-content p {
+      color:#555;
+      font-size:0.95em;
+      margin-bottom:15px;
+      line-height:1.6em;
+    }
+
+    .card-content a {
+      text-decoration:none;
+      background:#1dbf73;
+      color:white;
+      padding:10px 20px;
+      border-radius:8px;
+      font-weight:500;
+      transition:0.3s;
+      display:inline-block;
+    }
+
+    .card-content a:hover {
+      background:#17a864;
+    }
+
+    /* Lightbox for full image */
+    .lightbox {
+      display:none;
+      position:fixed;
+      z-index:3000;
+      padding-top:60px;
+      left:0; top:0;
+      width:100%; height:100%;
+      overflow:auto;
+      background:rgba(0,0,0,0.9);
+      animation:fadeIn 0.3s ease;
+    }
+
+    .lightbox img {
+      margin:auto;
+      display:block;
+      max-width:90%;
+      max-height:85%;
+      border-radius:10px;
+      box-shadow:0 0 20px rgba(255,255,255,0.3);
+      animation:zoomIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {from{opacity:0;} to{opacity:1;}}
+    @keyframes zoomIn {from{transform:scale(0.9); opacity:0;} to{transform:scale(1); opacity:1;}}
+
+    .close-btn-lightbox {
+      position:absolute;
+      top:20px; right:35px;
+      color:white;
+      font-size:40px;
+      font-weight:bold;
+      cursor:pointer;
+      transition:0.3s;
+    }
+
+    .close-btn-lightbox:hover {color:#1dbf73;}
+
+    /* Footer */
+    footer {
+      background-color:#1dbf73;
+      color:white;
+      text-align:center;
+      padding:25px 5%;
+      margin-top:50px;
+    }
+    footer a {color:white; text-decoration:none; font-weight:500;}
+    footer a:hover {text-decoration:underline;}
+
+    /* Responsive */
+    @media (max-width:768px){
+      nav ul{display:none;}
+      .hamburger{display:flex;}
+      .hero {padding:60px 15px;}
+      .hero h1 {font-size:2em;}
+      .lightbox img{max-width:95%; max-height:75%;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <span class="close-btn" id="closeBtn">&times;</span>
+    <a href="#">Home</a>
+    <a href="#">Mining</a>
+    <a href="#">Investing</a>
+    <a href="#">Finance Tips</a>
+    <a href="#">Contact</a>
+  </div>
+
+  <!-- Navbar -->
+  <nav>
+    <div class="logo">SafeFinance</div>
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Mining</a></li>
+      <li><a href="#">Investing</a></li>
+      <li><a href="#">Finance Tips</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger">
+      <div></div><div></div><div></div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>Welcome to <span>SafeFinance</span></h1>
+    <p>Your trusted space for <strong>smart investing</strong>,
+      <strong>safe mining</strong>, and <strong>finance growth</strong>.<br>
+      Simple insights. Real results.</p>
+  </section>
+
+  <!-- Card Section -->
+  <section class="card-container">
+    <div class="card">
+      <img src="" alt="Safe Mining Investment">
+      <div class="card-content">
+        <h3>Safe Mining Investment</h3>
+        <p>Discover <strong>safe and legitimate mining platforms</strong> that offer consistent online income with secure finance growth opportunities.</p>
+        <a href="111hshshsjjh6767hshshs9909shh%%$4.html">Read More</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="https://via.placeholder.com/600x400" alt="">
+      <div class="card-content">
+        <h3>Invest Smart</h3>
+        <p>Learn proven ways to make your money work for you through safe investing.</p>
+        <a href="#">Read More</a>
+      </div>
+    </div>
+    
+       <div class="card">
+      <img src="https://via.placeholder.com/600x400" alt="">
+      <div class="card-content">
+        <h3>Invest Smart</h3>
+        <p>Learn proven ways to make your money work for you through safe investing.</p>
+        <a href="#">Read More</a>
+      </div>
+    </div>
+       <div class="card">
+      <img src="https://via.placeholder.com/600x400" alt="">
+      <div class="card-content">
+        <h3>Invest Smart</h3>
+        <p>Learn proven ways to make your money work for you through safe investing.</p>
+        <a href="#">Read More</a>
+      </div>
+    </div>
+   <div class="card">
+      <img src="https://via.placeholder.com/600x400" alt="">
+      <div class="card-content">
+        <h3>Invest Smart</h3>
+        <p>Learn proven ways to make your money work for you through safe investing.</p>
+        <a href="#">Read More</a>
+      </div>
+    </div>
+   <div class="card">
+      <img src="https://via.placeholder.com/600x400" alt="">
+      <div class="card-content">
+        <h3>Invest Smart</h3>
+        <p>Learn proven ways to make your money work for you through safe investing.</p>
+        <a href="#">Read More</a>
+      </div>
+    </div>
+   <div class="card">
+      <img src="https://via.placeholder.com/600x400" alt="">
+      <div class="card-content">
+        <h3>Invest Smart</h3>
+        <p>Learn proven ways to make your money work for you through safe investing.</p>
+        <a href="#">Read More</a>
+      </div>
+    </div>
+
+       <div class="card">
+      <img src="https://via.placeholder.com/600x400" alt="">
+      <div class="card-content">
+        <h3>Invest Smart</h3>
+        <p>Learn proven ways to make your money work for you through safe investing.</p>
+        <a href="#">Read More</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="https://via.placeholder.com/600x400" alt="">
+      <div class="card-content">
+        <h3>Personal Finance</h3>
+        <p>Build strong financial habits for long-term success and stability.</p>
+        <a href="#">Read More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 SafeFinance | <a href="#">Privacy Policy</a> | <a href="#">Disclaimer</a></p>
+  </footer>
+
+  <!-- Fullscreen Lightbox -->
+  <div id="imgLightbox" class="lightbox">
+    <span class="close-btn-lightbox" id="closeLightbox">&times;</span>
+    <img id="lightboxImg" src="" alt="">
+  </div>
+
+  <script>
+    // Sidebar Toggle
+    const sidebar=document.getElementById("sidebar");
+    const hamburger=document.getElementById("hamburger");
+    const overlay=document.getElementById("overlay");
+    const closeBtn=document.getElementById("closeBtn");
+
+    hamburger.addEventListener("click",()=>{sidebar.classList.add("active");overlay.classList.add("active");});
+    closeBtn.addEventListener("click",()=>{sidebar.classList.remove("active");overlay.classList.remove("active");});
+    overlay.addEventListener("click",()=>{sidebar.classList.remove("active");overlay.classList.remove("active");});
+
+    // Lightbox (image fullscreen view)
+    const lightbox=document.getElementById("imgLightbox");
+    const lightboxImg=document.getElementById("lightboxImg");
+    const closeLightbox=document.getElementById("closeLightbox");
+
+    document.querySelectorAll(".card img").forEach(img=>{
+      img.addEventListener("click",()=>{
+        lightbox.style.display="block";
+        lightboxImg.src=img.src;
+      });
+    });
+
+    closeLightbox.onclick=()=>lightbox.style.display="none";
+    lightbox.onclick=(e)=>{if(e.target===lightbox) lightbox.style.display="none";}
+  </script>
+</body>
+</html>
